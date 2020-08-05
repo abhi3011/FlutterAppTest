@@ -77,6 +77,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter layout',
       home: Scaffold(
+          drawer: Drawer(
+            child: DrawerParent(),
+          ),
           appBar: AppBar(
             title: Text('Test app'),
           ),
@@ -91,9 +94,26 @@ class MyApp extends StatelessWidget {
               _titleWidget,
               _buttonSection,
               _textSection,
+              FirstScreen()
             ],
           )),
       theme: ThemeData.light(),
+    );
+  }
+}
+
+class DrawerParent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: <Widget>[
+        DrawerHeader(
+          child: Text('Drawer Header'),
+        ),
+        ListTile(
+          title: Text('Item 1'),
+        )
+      ],
     );
   }
 }
@@ -108,6 +128,12 @@ class _StarState extends State<Star> {
   bool isFavourite = false;
 
   void _onTap() {
+    final snackBar = SnackBar(
+      duration: Duration(seconds: 1),
+      content: Text('Content clicked'),
+    );
+    Scaffold.of(context).showSnackBar(snackBar);
+
     setState(() {
       if (isFavourite) {
         likes--;
@@ -135,6 +161,41 @@ class _StarState extends State<Star> {
           ),
         )
       ],
+    );
+  }
+}
+
+class FirstScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: FlatButton(
+          child: Text('Navigate'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SecondScreen()),
+            );
+          }),
+    );
+  }
+}
+
+class SecondScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second screen"),
+      ),
+      body: Center(
+        child: RaisedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Go back!'),
+        ),
+      ),
     );
   }
 }
