@@ -4,6 +4,21 @@ import 'package:flutter/material.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext buildContext) {
+    return MaterialApp(
+      title: 'Flutter layout',
+      initialRoute: '/',
+      routes: {
+        '/': (buildContext) => HomeScreen(),
+        '/second': (buildContext) => SecondScreen()
+      },
+      theme: ThemeData.light(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
   /// Create the button
   static Column _buildButtonColumn(Color color, IconData icon, String label) {
     return Column(
@@ -23,7 +38,7 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Widget _buttonSection = Container(
+  Widget buttonSection = Container(
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
@@ -35,7 +50,7 @@ class MyApp extends StatelessWidget {
   );
 
   /// Create the title widget
-  Widget _titleWidget = Container(
+  Widget titleWidget = Container(
     padding: const EdgeInsets.all(32),
     child: Row(
       children: <Widget>[
@@ -59,7 +74,7 @@ class MyApp extends StatelessWidget {
     ),
   );
 
-  Widget _textSection = Container(
+  Widget textSection = Container(
     padding: const EdgeInsets.all(32),
     child: Text(
       'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
@@ -73,31 +88,22 @@ class MyApp extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext buildContext) {
-    return MaterialApp(
-      title: 'Flutter layout',
-      home: Scaffold(
-          drawer: Drawer(
-            child: DrawerParent(),
-          ),
-          appBar: AppBar(
-            title: Text('Test app'),
-          ),
-          body: ListView(
-            children: <Widget>[
-              Image.asset(
-                'images/1.jpg',
-                width: 600,
-                height: 640,
-                fit: BoxFit.cover,
-              ),
-              _titleWidget,
-              _buttonSection,
-              _textSection,
-              FirstScreen()
-            ],
-          )),
-      theme: ThemeData.light(),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: DrawerParent(),
+      appBar: AppBar(title: Text('App bar')),
+      body: ListView(children: [
+        Image.asset(
+          'images/1.jpg',
+          width: 600,
+          height: 640,
+          fit: BoxFit.cover,
+        ),
+        titleWidget,
+        buttonSection,
+        textSection,
+        FirstNavigationButton(),
+      ]),
     );
   }
 }
@@ -165,17 +171,27 @@ class _StarState extends State<Star> {
   }
 }
 
-class FirstScreen extends StatelessWidget {
+class FirstNavigationButton extends StatelessWidget {
+  _navigateToSecondScreen(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SecondScreen()),
+    );
+
+    final snackBar = SnackBar(
+      duration: Duration(seconds: 1),
+      content: Text('$result'),
+    );
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: FlatButton(
           child: Text('Navigate'),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SecondScreen()),
-            );
+            _navigateToSecondScreen(context);
           }),
     );
   }
@@ -188,14 +204,20 @@ class SecondScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Second screen"),
       ),
-      body: Center(
-        child: RaisedButton(
+      body: ListView(children: <Widget>[
+        RaisedButton(
+          child: Text('YES button'),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, 'YES pressed!');
           },
-          child: Text('Go back!'),
         ),
-      ),
+        RaisedButton(
+          child: Text('NO button'),
+          onPressed: () {
+            Navigator.pop(context, 'NO pressed!');
+          },
+        ),
+      ]),
     );
   }
 }
