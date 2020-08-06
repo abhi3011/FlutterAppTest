@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -103,6 +104,8 @@ class HomeScreen extends StatelessWidget {
         buttonSection,
         textSection,
         FirstNavigationButton(),
+        DeleteDateSomewhere(),
+        //Center(child: CircularProgressIndicator()),
       ]),
     );
   }
@@ -197,6 +200,38 @@ class FirstNavigationButton extends StatelessWidget {
   }
 }
 
+class DeleteDateSomewhere extends StatelessWidget {
+  Future<http.Response> deleteAlbum(String id, BuildContext context) async {
+    final http.Response response = await http.delete(
+      'https://jsonplaceholder.typicode.com/albums/$id',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      showSnackBar(message: 'Successfully deleted', context: context);
+    } else {
+      showSnackBar(
+          message: 'Failed to delete', context: context, durationInSeconds: 2);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        RaisedButton(
+          child: Text('Delete Something'),
+          onPressed: () {
+            deleteAlbum("1", context);
+          },
+        )
+      ],
+    );
+  }
+}
+
 class SecondScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -220,4 +255,18 @@ class SecondScreen extends StatelessWidget {
       ]),
     );
   }
+}
+
+void showSnackBar(
+    {@required String message,
+    @required BuildContext context,
+    int durationInSeconds}) {
+  if (durationInSeconds == null) {
+    durationInSeconds = 1;
+  }
+  final snackBar = SnackBar(
+    duration: Duration(seconds: durationInSeconds),
+    content: Text(message),
+  );
+  Scaffold.of(context).showSnackBar(snackBar);
 }
