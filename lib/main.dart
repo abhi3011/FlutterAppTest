@@ -14,7 +14,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (buildContext) => HomeScreen(),
-        '/second': (buildContext) => SecondScreen()
+        '/second': (buildContext) => SecondScreen(),
+        '/third': (buildContext) => ThirdScreen()
       },
       theme: ThemeData.light(),
     );
@@ -212,6 +213,27 @@ class FirstNavigationButton extends StatelessWidget {
   }
 }
 
+class SecondNavigationButton extends StatelessWidget {
+  void _navigateToThirdScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ThirdScreen()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: FlatButton(
+        child: Text('Go to tabs screen'),
+        onPressed: () {
+          _navigateToThirdScreen(context);
+        },
+      ),
+    );
+  }
+}
+
 class DeleteDateSomewhere extends StatelessWidget {
   Future<http.Response> deleteAlbum(String id, BuildContext context) async {
     final http.Response response = await http.delete(
@@ -267,6 +289,39 @@ class SecondScreen extends StatelessWidget {
         FetchAlbum(),
       ]),
     );
+  }
+}
+
+class ThirdScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs: <Widget>[
+                Tab(icon: Icon(Icons.directions_bike)),
+                Tab(icon: Icon(Icons.directions_boat)),
+                Tab(icon: Icon(Icons.directions_bus)),
+              ],
+            ),
+          ),
+          body: TabBarView(
+            children: <Widget>[
+              Container(
+                child: RaisedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Go back First screen'),
+                ),
+              ),
+              Tab(icon: Icon(Icons.directions_boat)),
+              Tab(icon: Icon(Icons.directions_bus)),
+            ],
+          ),
+        ));
   }
 }
 
