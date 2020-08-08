@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -75,19 +77,6 @@ class HomeScreen extends StatelessWidget {
     ),
   );
 
-  Widget textSection = Container(
-    padding: const EdgeInsets.all(32),
-    child: Text(
-      'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
-      'Alps. Situated 1,578 meters above sea level, it is one of the '
-      'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
-      'half-hour walk through pastures and pine forest, leads you to the '
-      'lake, which warms to 20 degrees Celsius in the summer. Activities '
-      'enjoyed here include rowing, and riding the summer toboggan run.',
-      softWrap: true,
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,11 +91,34 @@ class HomeScreen extends StatelessWidget {
         ),
         titleWidget,
         buttonSection,
-        textSection,
+        TextSection(),
         FirstNavigationButton(),
         DeleteDateSomewhere(),
         //Center(child: CircularProgressIndicator()),
       ]),
+    );
+  }
+}
+
+class TextSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        showSnackBar(message: 'User tapped on the text!', context: context);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(32),
+        child: Text(
+          'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
+          'Alps. Situated 1,578 meters above sea level, it is one of the '
+          'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
+          'half-hour walk through pastures and pine forest, leads you to the '
+          'lake, which warms to 20 degrees Celsius in the summer. Activities '
+          'enjoyed here include rowing, and riding the summer toboggan run.',
+          softWrap: true,
+        ),
+      ),
     );
   }
 }
@@ -252,7 +264,39 @@ class SecondScreen extends StatelessWidget {
             Navigator.pop(context, 'NO pressed!');
           },
         ),
+        FetchAlbum(),
       ]),
+    );
+  }
+}
+
+class FetchAlbum extends StatefulWidget {
+  @override
+  _FetchAlbumState createState() => _FetchAlbumState();
+}
+
+class _FetchAlbumState extends State<FetchAlbum> {
+  fetchJson(BuildContext context) async {
+    final response = await http.get(
+        'final response = http.get(https://jsonplaceholder.typicode.com/albums/100');
+    if (response.statusCode == 200) {
+      return json.decode(response.body)['UserId'].toString();
+    } else {
+      showSnackBar(message: 'Failed to to get the json', context: context);
+      return "Failed to the get the response.";
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: fetchJson(context),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text(snapshot.data);
+        }
+        return Center(child: CircularProgressIndicator());
+      },
     );
   }
 }
