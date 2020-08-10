@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:webview_flutter/webview_flutter.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,7 +16,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (buildContext) => HomeScreen(),
         '/second': (buildContext) => SecondScreen(),
-        '/third': (buildContext) => ThirdScreen()
+        '/third': (buildContext) => ThirdScreen(),
+        '/fourth': (buildContext) => FourthScreen()
       },
       theme: ThemeData.light(),
     );
@@ -95,6 +97,8 @@ class HomeScreen extends StatelessWidget {
         TextSection(),
         FirstNavigationButton(),
         DeleteDateSomewhere(),
+        SecondNavigationButton(),
+        GotToWebViewButton()
         //Center(child: CircularProgressIndicator()),
       ]),
     );
@@ -204,7 +208,7 @@ class FirstNavigationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: FlatButton(
+      child: RaisedButton(
           child: Text('Navigate'),
           onPressed: () {
             _navigateToSecondScreen(context);
@@ -224,7 +228,7 @@ class SecondNavigationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: FlatButton(
+      child: RaisedButton(
         child: Text('Go to tabs screen'),
         onPressed: () {
           _navigateToThirdScreen(context);
@@ -262,6 +266,27 @@ class DeleteDateSomewhere extends StatelessWidget {
           },
         )
       ],
+    );
+  }
+}
+
+class GotToWebViewButton extends StatelessWidget {
+  void _goToWebView(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => FourthScreen()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: RaisedButton(
+        onPressed: () {
+          _goToWebView(context);
+        },
+        child: Text('Go to web view'),
+      ),
     );
   }
 }
@@ -322,6 +347,21 @@ class ThirdScreen extends StatelessWidget {
             ],
           ),
         ));
+  }
+}
+
+class FourthScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Web view demo'),
+      ),
+      body: WebView(
+        initialUrl: 'https://en.wikipedia.org/wiki/Kraken',
+        javascriptMode: JavascriptMode.disabled,
+      ),
+    );
   }
 }
 
